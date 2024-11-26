@@ -10,10 +10,10 @@
 
           <h2>Verantwortliche Stelle</h2>
           <p>Verantwortliche Stelle für die Datenverarbeitung auf dieser Website ist:</p>
-          <p>GGS-Network UG</p>
-          <p>[Adresse]</p>
-          <p>[E-Mail]</p>
-          <p>[Telefon]</p>
+          <p>Global Gateway Solutions Network (GGS-Network) UG</p>
+          <p>-</p>
+          <p>privacy@ggs-network.com</p>
+          <p>+49 (0) 15679229548</p>
 
           <h2>Datenerhebung und -verarbeitung</h2>
           <p>Wir erheben und verarbeiten personenbezogene Daten nur, wenn dies gesetzlich erlaubt ist oder Sie in die Datenerhebung einwilligen. Personenbezogene Daten sind alle Daten, mit denen Sie persönlich identifiziert werden können, wie Name, Adresse, E-Mail-Adresse und IP-Adresse.</p>

@@ -1,5 +1,5 @@
 <template>
-  <header v-if="!isDashboardPage" id="header" class="fixed-top" :class="{ 'header-scrolled': isScrolled }">
+  <header v-if="!isDashboardPage" id="header" class="fixed-top" :class="{ 'header-scrolled': isScrolled || !isHomePage }">
     <div class="container d-flex align-items-center justify-content-between">
       <!-- Logo links -->
       <div class="logo">
@@ -17,18 +17,12 @@
       <!-- Navigation rechts -->
       <nav id="navbar" class="navbar" :class="{ 'navbar-mobile': isMobileNavOpen }">
         <ul>
-          <!-- Hauptnavigation -->
-          <li><a href="#hero" class="nav-link scrollto" :class="{ 'active': isActiveRoute('hero') && $route.path === '/' }" @click="scrollToSection('hero')">Home</a></li>
-          <li><a href="#services" class="nav-link scrollto" :class="{ 'active': isActiveRoute('services') }" @click="scrollToSection('services')">Services</a></li>
-          <li><a href="#pricing" class="nav-link scrollto" :class="{ 'active': isActiveRoute('pricing') }" @click="scrollToSection('pricing')">Preise</a></li>
-          <li><a href="#contact" class="nav-link scrollto" :class="{ 'active': isActiveRoute('contact') }" @click="scrollToSection('contact')">Kontakt</a></li>
-          
-          <!-- Trenner -->
-          <li class="nav-divider"></li>
-          
-          <!-- System Links -->
-          <li><router-link class="nav-link system-link" :class="{ 'active': $route.path === '/status' }" to="/status">Status</router-link></li>
-          <li><router-link to="/login" class="nav-link system-link">Dashboard</router-link></li>
+          <li><router-link to="/" class="nav-link" :class="{ 'active': isHomePage }">Home</router-link></li>
+          <li><router-link to="/services" class="nav-link" :class="{ 'active': isServicesPage }">Leistungen</router-link></li>
+          <li><router-link to="/features" class="nav-link" :class="{ 'active': isFeaturesPage }">Funktionen</router-link></li>
+          <li><router-link to="/vision" class="nav-link" :class="{ 'active': isVisionPage }">Vision</router-link></li>
+          <li><router-link to="/status" class="nav-link" :class="{ 'active': isStatusPage }">Status</router-link></li>
+          <li><router-link to="/datenschutz" class="nav-link" :class="{ 'active': isPrivacyPage }">Datenschutz</router-link></li>
         </ul>
       </nav>
 
@@ -44,22 +38,36 @@ export default {
     return {
       isMobileNavOpen: false,
       isScrolled: false,
-      activeSection: 'hero',
       lastScrollY: 0,
       scrollDirection: 'down'
     }
   },
   computed: {
+    isDashboardPage() {
+      return this.$route.path.startsWith('/dashboard')
+    },
+    isHomePage() {
+      return this.$route.path === '/'
+    },
+    isServicesPage() {
+      return this.$route.path === '/services'
+    },
+    isFeaturesPage() {
+      return this.$route.path === '/features'
+    },
+    isVisionPage() {
+      return this.$route.path === '/vision'
+    },
     isStatusPage() {
       return this.$route.path === '/status'
     },
-    isDashboardPage() {
-      return this.$route.path.startsWith('/dashboard')
+    isPrivacyPage() {
+      return this.$route.path === '/datenschutz'
     }
   },
   mounted() {
     window.addEventListener('scroll', this.handleScroll)
-    this.checkRoute()
+    this.handleScroll() // Initial check
   },
   unmounted() {
     window.removeEventListener('scroll', this.handleScroll)
@@ -70,86 +78,15 @@ export default {
     },
     handleScroll() {
       const currentScrollY = window.scrollY
-      
-      this.scrollDirection = currentScrollY > this.lastScrollY ? 'down' : 'up'
-      this.lastScrollY = currentScrollY
-
-      if (this.isDashboardPage) {
-        this.isScrolled = true
-      } else if (this.isStatusPage) {
-        this.isScrolled = currentScrollY > 0
-      } else {
-        this.isScrolled = currentScrollY > 50
-      }
-
-      if (this.$route.path === '/') {
-        this.checkActiveSection()
-      }
-    },
-    checkActiveSection() {
-      const sections = ['hero', 'services', 'pricing', 'contact']
-      
-      for (const section of sections) {
-        const element = document.getElementById(section)
-        if (element) {
-          const rect = element.getBoundingClientRect()
-          const buffer = window.innerHeight * 0.3
-          
-          if (rect.top <= buffer && rect.bottom >= buffer) {
-            this.activeSection = section
-            break
-          }
-        }
-      }
-    },
-    checkRoute() {
-      if (this.$route.path === '/datenschutz' || this.isStatusPage || this.isDashboardPage) {
-        this.isScrolled = true
-        this.activeSection = null
-      } else if (window.scrollY <= 50) {
-        this.isScrolled = false
-      }
-    },
-    isActiveRoute(section) {
-      if (this.$route.path === '/datenschutz' || this.isStatusPage || this.isDashboardPage) {
-        return false
-      }
-      return this.activeSection === section
-    },
-    scrollToSection(sectionId) {
-      if (this.$route.path !== '/') {
-        this.$router.push('/').then(() => {
-          this.$nextTick(() => {
-            const element = document.getElementById(sectionId)
-            if (element) {
-              const headerOffset = 90
-              const elementPosition = element.getBoundingClientRect().top
-              const offsetPosition = elementPosition + window.pageYOffset - headerOffset
-
-              window.scrollTo({
-                top: offsetPosition,
-                behavior: 'smooth'
-              })
-            }
-          })
-        })
-      } else {
-        const element = document.getElementById(sectionId)
-        if (element) {
-          const headerOffset = 90
-          const elementPosition = element.getBoundingClientRect().top
-          const offsetPosition = elementPosition + window.pageYOffset - headerOffset
-
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
-          })
-        }
-      }
-
-      if (this.isMobileNavOpen) {
-        this.toggleMobileNav()
-      }
+      this.isScrolled = currentScrollY > 50
+    }
+  },
+  watch: {
+    $route() {
+      // Schließe mobile Navigation bei Routenwechsel
+      this.isMobileNavOpen = false
+      // Prüfe Scroll-Status neu
+      this.handleScroll()
     }
   }
 }
@@ -196,6 +133,7 @@ export default {
   display: flex;
   list-style: none;
   align-items: center;
+  gap: 10px;
 }
 
 .nav-link {
@@ -224,30 +162,6 @@ export default {
 .nav-link:hover::after,
 .nav-link.active::after {
   width: 100%;
-}
-
-.nav-divider {
-  width: 1px;
-  height: 24px;
-  background: rgba(255, 255, 255, 0.3);
-  margin: 0 15px;
-}
-
-.system-link {
-  font-weight: 600;
-  padding: 5px 15px !important;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.1);
-  margin: 0 5px;
-}
-
-.system-link:hover,
-.system-link.active {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.system-link::after {
-  display: none;
 }
 
 .mobile-nav-toggle {
@@ -283,6 +197,7 @@ export default {
   .navbar ul {
     flex-direction: column;
     padding: 20px;
+    gap: 0;
   }
 
   .navbar li {
@@ -294,17 +209,6 @@ export default {
     margin: 5px 0;
     padding: 10px 15px;
     display: block;
-  }
-
-  .nav-divider {
-    width: 100%;
-    height: 1px;
-    margin: 15px 0;
-  }
-
-  .system-link {
-    margin: 5px 0;
-    text-align: center;
   }
 
   .navbar-mobile {

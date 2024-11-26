@@ -48,8 +48,8 @@
               </p>
               <div class="social-links">
                 <a href="#" class="twitter"><i class="bi bi-twitter-x"></i></a>
-                <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
-                <a href="#" class="github"><i class="bi bi-github"></i></a>
+                <a href="https://www.linkedin.com/company/ggs-network-com" class="linkedin"><i class="bi bi-linkedin"></i></a>
+                <a href="https://github.com/Good-Game-Services" class="github"><i class="bi bi-github"></i></a>
               </div>
             </div>
           </div>
@@ -58,7 +58,7 @@
 
       <div class="footer-legal text-center">
         <div class="copyright">
-          &copy; {{ new Date().getFullYear() }} <strong><span>CloudTech Solutions</span></strong>. Alle Rechte vorbehalten
+          &copy; {{ new Date().getFullYear() }} <strong><span>Global Gateway Solutions Network</span></strong>. Alle Rechte vorbehalten
         </div>
       </div>
     </div>

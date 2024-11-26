@@ -1,12 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
-import Login from '../views/Login.vue'
-import Register from '../views/Register.vue'
 import Dashboard from '../views/Dashboard.vue'
 import Status from '../views/Status.vue'
-import Logout from '../views/Logout.vue'
-import Profile from '../views/Profile.vue'
 import Privacy from '../views/Privacy.vue'
+import Services from '../views/Services.vue'
+import Features from '../views/Features.vue'
 import { requireAuth, redirectIfAuthenticated } from './guards';
 import { authStore } from '@/store/auth';
 
@@ -31,22 +29,9 @@ const routes = [
     component: Home
   },
   {
-    path: '/login',
-    name: 'Login',
-    component: Login,
-    beforeEnter: redirectIfAuthenticated
-  },
-  {
-    path: '/register',
-    name: 'Register',
-    component: Register,
-    beforeEnter: checkRegistrationEnabled
-  },
-  {
-    path: '/dashboard',
-    name: 'Dashboard',
-    component: Dashboard,
-    beforeEnter: requireAuth
+    path: '/services',
+    name: 'Services',
+    component: Services
   },
   {
     path: '/status',
@@ -54,20 +39,19 @@ const routes = [
     component: Status
   },
   {
-    path: '/logout',
-    name: 'Logout',
-    component: Logout
-  },
-  {
-    path: '/profile',
-    name: 'Profile',
-    component: Profile,
-    beforeEnter: requireAuth
-  },
-  {
     path: '/datenschutz',
     name: 'Privacy',
     component: Privacy
+  },
+  {
+    path: '/vision',
+    name: 'Vision',
+    component: () => import('../views/Vision.vue')
+  },
+  {
+    path: '/features',
+    name: 'Features',
+    component: Features
   }
 ]
 
@@ -85,12 +69,9 @@ const router = createRouter({
   }
 })
 
-// Globaler Navigation Guard
+// Vereinfachter Global Guard
 router.beforeEach((to, from, next) => {
-  // Prüfe Token-Gültigkeit bei jeder Navigation
-  if (authStore.token) {
-    // Optional: Hier können Sie die Token-Gültigkeit prüfen
-  }
+  // Nur noch basic Routing-Logik
   next();
 });
 
