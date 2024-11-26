@@ -6,85 +6,129 @@
         <p>Velocity Desk bietet Ihnen ein leistungsstarkes IT-Ökosystem: Von Database as a Service (DBaaS) bis hin zu Network as a Service (NaaS) decken wir alles ab, was Ihr Unternehmen braucht.</p>
       </div>
 
-      <div class="services-grid">
-        <div class="service-card" @click="$emit('show-service', 'dbaas')">
-          <div class="service-icon">
-            <i class="bi bi-database"></i>
+      <swiper
+        :modules="[SwiperAutoplay, SwiperPagination, SwiperNavigation]"
+        :slides-per-view="1"
+        :space-between="30"
+        :autoplay="{ delay: 5000, disableOnInteraction: false }"
+        :pagination="{ clickable: true, dynamicBullets: true }"
+        :navigation="true"
+        :breakpoints="{
+          '320': {
+            slidesPerView: 1,
+            spaceBetween: 20
+          },
+          '640': {
+            slidesPerView: 1,
+            spaceBetween: 20
+          },
+          '768': {
+            slidesPerView: 2,
+            spaceBetween: 30
+          },
+          '1024': {
+            slidesPerView: 3,
+            spaceBetween: 30
+          },
+          '1400': {
+            slidesPerView: 3,
+            spaceBetween: 40
+          }
+        }"
+        :centeredSlides="isMobile"
+        :loop="true"
+        class="services-swiper"
+      >
+        <swiper-slide v-for="(service, type) in services" :key="type">
+          <div class="service-card" @click="$emit('show-service', type)">
+            <div class="service-icon">
+              <i :class="service.icon"></i>
+            </div>
+            <div class="service-content">
+              <h3>{{ service.title }}</h3>
+              <p>{{ service.description }}</p>
+            </div>
+            <div class="service-hover">
+              <span>Mehr erfahren</span>
+              <i class="bi bi-arrow-right"></i>
+            </div>
           </div>
-          <div class="service-content">
-            <h3>Database as a Service (DBaaS)</h3>
-            <p>Schnelle, skalierbare Datenbanken für Unternehmen jeder Größe.</p>
-          </div>
-          <div class="service-hover">
-            <span>Mehr erfahren</span>
-            <i class="bi bi-arrow-right"></i>
-          </div>
-        </div>
-
-        <div class="service-card" @click="$emit('show-service', 'daas')">
-          <div class="service-icon">
-            <i class="bi bi-display"></i>
-          </div>
-          <div class="service-content">
-            <h3>Desktop as a Service (DaaS)</h3>
-            <p>Flexibler und sicherer Zugriff auf Remote-Arbeitsplätze – jederzeit, überall.</p>
-          </div>
-          <div class="service-hover">
-            <span>Mehr erfahren</span>
-            <i class="bi bi-arrow-right"></i>
-          </div>
-        </div>
-
-        <div class="service-card" @click="$emit('show-service', 'iaas')">
-          <div class="service-icon">
-            <i class="bi bi-cloud"></i>
-          </div>
-          <div class="service-content">
-            <h3>Windows Company Infrastructure (IaaS)</h3>
-            <p>Vollständige Unternehmens-IT in der Cloud, ohne Kompromisse bei Leistung oder Sicherheit.</p>
-          </div>
-          <div class="service-hover">
-            <span>Mehr erfahren</span>
-            <i class="bi bi-arrow-right"></i>
-          </div>
-        </div>
-
-        <div class="service-card" @click="$emit('show-service', 'naas')">
-          <div class="service-icon">
-            <i class="bi bi-diagram-3"></i>
-          </div>
-          <div class="service-content">
-            <h3>Network as a Service (NaaS)</h3>
-            <p>Sichere und leistungsstarke Netzwerke, die skalieren, wenn Sie es brauchen.</p>
-          </div>
-          <div class="service-hover">
-            <span>Mehr erfahren</span>
-            <i class="bi bi-arrow-right"></i>
-          </div>
-        </div>
-
-        <div class="service-card" @click="$emit('show-service', 'baas')">
-          <div class="service-icon">
-            <i class="bi bi-hdd-network"></i>
-          </div>
-          <div class="service-content">
-            <h3>Storage Backend as a Service (BaaS)</h3>
-            <p>Zuverlässige Speicherlösungen mit DSGVO-Konformität.</p>
-          </div>
-          <div class="service-hover">
-            <span>Mehr erfahren</span>
-            <i class="bi bi-arrow-right"></i>
-          </div>
-        </div>
-      </div>
+        </swiper-slide>
+      </swiper>
     </div>
   </section>
 </template>
 
 <script>
+import { Swiper, SwiperSlide } from 'swiper/vue'
+import { Autoplay, Pagination, Navigation } from 'swiper/modules'
+import 'swiper/css'
+import 'swiper/css/pagination'
+import 'swiper/css/navigation'
+
 export default {
   name: 'ServiceSection',
-  emits: ['show-service']
+  components: {
+    Swiper,
+    SwiperSlide
+  },
+  emits: ['show-service'],
+  data() {
+    return {
+      SwiperAutoplay: Autoplay,
+      SwiperPagination: Pagination,
+      SwiperNavigation: Navigation,
+      windowWidth: window.innerWidth,
+      services: {
+        dbaas: {
+          icon: 'bi bi-database',
+          title: 'Database as a Service (DBaaS)',
+          description: 'Schnelle, skalierbare Datenbanken für Unternehmen jeder Größe.'
+        },
+        daas: {
+          icon: 'bi bi-display',
+          title: 'Desktop as a Service (DaaS)',
+          description: 'Flexibler und sicherer Zugriff auf Remote-Arbeitsplätze – jederzeit, überall.'
+        },
+        iaas: {
+          icon: 'bi bi-cloud',
+          title: 'Windows Company Infrastructure (IaaS)',
+          description: 'Vollständige Unternehmens-IT in der Cloud, ohne Kompromisse bei Leistung oder Sicherheit.'
+        },
+        naas: {
+          icon: 'bi bi-diagram-3',
+          title: 'Network as a Service (NaaS)',
+          description: 'Sichere und leistungsstarke Netzwerke, die skalieren, wenn Sie es brauchen.'
+        },
+        baas: {
+          icon: 'bi bi-hdd-network',
+          title: 'Storage Backend as a Service (BaaS)',
+          description: 'Zuverlässige Speicherlösungen mit DSGVO-Konformität.'
+        },
+        saas: {
+          icon: 'bi bi-server',
+          title: 'Server as a Service (SaaS)',
+          description: 'Enterprise Server-Infrastruktur mit maximaler Leistung.'
+        }
+      }
+    }
+  },
+  computed: {
+    isMobile() {
+      return this.windowWidth < 768
+    }
+  },
+  mounted() {
+    window.addEventListener('resize', this.onResize)
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.onResize)
+  },
+  methods: {
+    onResize() {
+      this.windowWidth = window.innerWidth
+    }
+  }
 }
 </script>
 
@@ -96,27 +140,14 @@ export default {
   margin: 50px 0;
 }
 
-.services::after {
-  content: '';
-  position: absolute;
-  bottom: -50px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(72, 52, 212, 0.2), transparent);
-}
-
-.section-title {
-  text-align: center;
-  margin-bottom: 50px;
-}
-
 .section-title h2 {
   color: var(--color-primary);
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 20px;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .section-title p {
@@ -127,58 +158,96 @@ export default {
   line-height: 1.6;
 }
 
-.services-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
-  padding: 20px;
+.services-swiper {
+  padding: 20px 0 60px;
+  margin: 0 -15px;
 }
 
 .service-card {
-  position: relative;
   background: white;
-  border-radius: 20px;
+  border-radius: 24px;
   padding: 30px;
-  transition: all 0.3s ease;
+  height: 100%;
+  min-height: 400px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(72, 52, 212, 0.05);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  position: relative;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(72, 52, 212, 0.1);
-  cursor: pointer;
+}
+
+.service-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(72, 52, 212, 0.05) 0%, rgba(72, 52, 212, 0) 100%);
+  z-index: 0;
+  transition: all 0.5s ease;
 }
 
 .service-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 20px 40px rgba(72, 52, 212, 0.15);
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 30px 60px rgba(72, 52, 212, 0.15);
+  border-color: rgba(72, 52, 212, 0.2);
+}
+
+.service-card:hover::before {
+  background: linear-gradient(135deg, rgba(72, 52, 212, 0.1) 0%, rgba(72, 52, 212, 0.02) 100%);
 }
 
 .service-icon {
-  width: 70px;
-  height: 70px;
+  position: relative;
+  width: 80px;
+  height: 80px;
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-  border-radius: 15px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
-  transition: all 0.3s ease;
+  margin-bottom: 25px;
+  transition: all 0.5s ease;
+  box-shadow: 0 10px 20px rgba(72, 52, 212, 0.2);
+}
+
+.service-card:hover .service-icon {
+  transform: scale(1.1) rotate(-5deg);
+  box-shadow: 0 15px 30px rgba(72, 52, 212, 0.3);
 }
 
 .service-icon i {
-  font-size: 30px;
+  font-size: 32px;
   color: white;
+  transition: all 0.5s ease;
+}
+
+.service-card:hover .service-icon i {
+  transform: scale(1.1);
+}
+
+.service-content {
+  position: relative;
+  z-index: 1;
+  flex-grow: 1;
 }
 
 .service-content h3 {
   color: var(--color-primary);
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   margin-bottom: 15px;
   font-weight: 600;
+  transition: all 0.3s ease;
 }
 
 .service-content p {
   color: var(--color-secondary);
-  line-height: 1.6;
+  line-height: 1.7;
   margin: 0;
+  font-size: 1.05rem;
 }
 
 .service-hover {
@@ -186,14 +255,15 @@ export default {
   bottom: -50px;
   left: 0;
   width: 100%;
-  padding: 15px 30px;
+  padding: 20px 35px;
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
   color: white;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  transition: all 0.3s ease;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   opacity: 0;
+  z-index: 2;
 }
 
 .service-card:hover .service-hover {
@@ -203,43 +273,101 @@ export default {
 
 .service-hover span {
   font-weight: 500;
+  letter-spacing: 0.5px;
 }
 
 .service-hover i {
   font-size: 20px;
+  transition: transform 0.3s ease;
+}
+
+.service-card:hover .service-hover i {
+  transform: translateX(5px);
+}
+
+/* Verbesserte Swiper Styles */
+:deep(.swiper-slide) {
+  height: auto;
+  transition: transform 0.3s ease;
+}
+
+:deep(.swiper-slide-active) {
+  transform: scale(1.02);
+}
+
+:deep(.swiper-pagination) {
+  bottom: -10px;
+}
+
+:deep(.swiper-pagination-bullet) {
+  width: 12px;
+  height: 12px;
+  background: var(--color-primary);
+  opacity: 0.5;
+  transition: all 0.3s ease;
+}
+
+:deep(.swiper-pagination-bullet-active) {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+:deep(.swiper-button-next),
+:deep(.swiper-button-prev) {
+  color: var(--color-primary);
+  width: 44px;
+  height: 44px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+:deep(.swiper-button-next:hover),
+:deep(.swiper-button-prev:hover) {
+  background: var(--color-primary);
+  color: white;
+  transform: scale(1.1);
+}
+
+:deep(.swiper-button-next:after),
+:deep(.swiper-button-prev:after) {
+  font-size: 20px;
 }
 
 @media (max-width: 768px) {
-  .services {
-    padding: 60px 0;
-    margin: 30px 0;
-  }
-
-  .services-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
-    padding: 10px;
-  }
-
   .service-card {
-    padding: 20px;
+    min-height: 350px;
+    padding: 25px;
   }
 
   .service-icon {
-    width: 60px;
-    height: 60px;
+    width: 65px;
+    height: 65px;
   }
 
   .service-icon i {
-    font-size: 24px;
+    font-size: 28px;
   }
 
-  .section-title h2 {
-    font-size: 2rem;
+  .service-content h3 {
+    font-size: 1.2rem;
   }
 
-  .section-title p {
+  .service-content p {
     font-size: 1rem;
+  }
+
+  :deep(.swiper-button-next),
+  :deep(.swiper-button-prev) {
+    display: none;
+  }
+}
+
+/* Smooth Scrolling für iOS */
+@supports (-webkit-overflow-scrolling: touch) {
+  .services-swiper {
+    -webkit-overflow-scrolling: touch;
   }
 }
 </style> 

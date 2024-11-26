@@ -76,9 +76,10 @@ export default {
             'DSGVO-konforme Datenspeicherung'
           ],
           specs: [
-            { icon: 'bi bi-speedometer', label: 'Performance', value: 'Bis zu 100.000 IOPS' },
-            { icon: 'bi bi-hdd', label: 'Storage', value: 'Bis zu 64 TB' },
-            { icon: 'bi bi-shield-check', label: 'Backup', value: 'Automatisch täglich' }
+            { icon: 'bi bi-speedometer', label: 'Performance', value: 'Bis zu 1M IOPS' },
+            { icon: 'bi bi-hdd', label: 'Storage', value: 'Bis zu 256 TB' },
+            { icon: 'bi bi-shield-check', label: 'Backup', value: 'Real-time Replikation' },
+            { icon: 'bi bi-clock', label: 'Recovery', value: 'RTO < 15 Min' }
           ]
         },
         daas: {
@@ -92,6 +93,12 @@ export default {
             'Integrierte Sicherheitsfunktionen',
             'Automatische Updates',
             'Zentrale Verwaltung'
+          ],
+          specs: [
+            { icon: 'bi bi-cpu', label: 'CPU', value: 'Bis zu 64 vCPUs' },
+            { icon: 'bi bi-memory', label: 'RAM', value: 'Bis zu 512 GB' },
+            { icon: 'bi bi-gpu-card', label: 'GPU', value: 'NVIDIA A100' },
+            { icon: 'bi bi-hdd', label: 'Storage', value: 'NVMe SSD' }
           ]
         },
         iaas: {
@@ -105,6 +112,12 @@ export default {
             'Hochverfügbarkeitsoptionen',
             'Disaster Recovery',
             'Managed Services'
+          ],
+          specs: [
+            { icon: 'bi bi-diagram-2', label: 'Verfügbarkeit', value: '99.999%' },
+            { icon: 'bi bi-clock-history', label: 'Backup', value: 'Kontinuierlich' },
+            { icon: 'bi bi-shield-lock', label: 'Firewall', value: 'Next-Gen Security' },
+            { icon: 'bi bi-diagram-3', label: 'Skalierung', value: 'Auto-Scaling' }
           ]
         },
         naas: {
@@ -118,6 +131,12 @@ export default {
             'DDoS-Schutz',
             'VPN-Services',
             'Traffic-Optimierung'
+          ],
+          specs: [
+            { icon: 'bi bi-speedometer2', label: 'Bandbreite', value: 'Bis zu 400 Gbit/s' },
+            { icon: 'bi bi-shield-check', label: 'DDoS-Schutz', value: 'Bis zu 20 Tbps' },
+            { icon: 'bi bi-clock', label: 'Latenz', value: '< 5ms' },
+            { icon: 'bi bi-globe', label: 'Redundanz', value: 'Multi-Region' }
           ]
         },
         baas: {
@@ -131,6 +150,32 @@ export default {
             'Geo-Redundanz',
             'S3-kompatible API',
             'Lifecycle Management'
+          ],
+          specs: [
+            { icon: 'bi bi-hdd-stack', label: 'Kapazität', value: 'Exabyte-Skalierung' },
+            { icon: 'bi bi-arrow-repeat', label: 'Redundanz', value: '6-fach Global' },
+            { icon: 'bi bi-lightning', label: 'Durchsatz', value: '100 GB/s' },
+            { icon: 'bi bi-shield-lock', label: 'Verschlüsselung', value: 'AES-256-GCM' }
+          ]
+        },
+        saas: {
+          icon: 'bi bi-server',
+          title: 'Server as a Service (SaaS)',
+          subtitle: 'Enterprise Server-Infrastruktur',
+          description: 'Hochleistungs-Serverinfrastruktur für anspruchsvolle Unternehmensanwendungen mit maximaler Verfügbarkeit und Skalierbarkeit.',
+          features: [
+            'Dedizierte Hardware-Ressourcen',
+            'Bare Metal Server Option',
+            'Kubernetes-Ready',
+            'Multi-Datacenter Deployment',
+            'Enterprise Support 24/7/365'
+          ],
+          specs: [
+            { icon: 'bi bi-cpu-fill', label: 'Prozessor', value: 'Bis zu 128 Cores' },
+            { icon: 'bi bi-memory', label: 'RAM', value: 'Bis zu 2 TB ECC' },
+            { icon: 'bi bi-hdd-network-fill', label: 'Storage', value: 'All-Flash Arrays' },
+            { icon: 'bi bi-speedometer2', label: 'Netzwerk', value: '400 Gbit/s' },
+            { icon: 'bi bi-shield-check', label: 'Verfügbarkeit', value: '99.99999%' }
           ]
         }
       }

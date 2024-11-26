@@ -47,6 +47,92 @@
 
           <h2>Datensicherheit</h2>
           <p>Wir treffen technische und organisatorische Maßnahmen, um Ihre Daten gegen Verlust, Manipulation und unberechtigten Zugriff zu schützen.</p>
+
+          <h2>Verwendete Frameworks und Cookies</h2>
+          <p>Unsere Website nutzt verschiedene Frameworks und Technologien, die für den Betrieb und die Funktionalität erforderlich sind. Hier finden Sie eine detaillierte Auflistung der verwendeten Technologien und deren Cookies:</p>
+
+          <div class="framework-section">
+            <h3>Vue.js</h3>
+            <p>Unser Frontend basiert auf Vue.js (Version 3):</p>
+            <ul>
+              <li>Keine permanenten Cookies</li>
+              <li>Temporäre Session-Storage für Routing-Informationen</li>
+              <li>Speicherdauer: Nur während der aktiven Sitzung</li>
+            </ul>
+          </div>
+
+          <div class="framework-section">
+            <h3>Bootstrap</h3>
+            <p>Für das responsive Design verwenden wir Bootstrap:</p>
+            <ul>
+              <li>Keine eigenen Cookies</li>
+              <li>Nur lokale CSS- und JavaScript-Dateien</li>
+            </ul>
+          </div>
+
+          <div class="framework-section">
+            <h3>Swiper</h3>
+            <p>Für Karussell-Funktionen:</p>
+            <ul>
+              <li>Temporäre Einstellungen im localStorage</li>
+              <li>Speichert Benutzereinstellungen für Animationen</li>
+              <li>Speicherdauer: 24 Stunden</li>
+            </ul>
+          </div>
+
+          <div class="framework-section">
+            <h3>Vue-Toastification</h3>
+            <p>Für System-Benachrichtigungen:</p>
+            <ul>
+              <li>Temporäre Session-Cookies</li>
+              <li>Speicherdauer: Bis zum Schließen des Browsers</li>
+            </ul>
+          </div>
+
+          <h2>Technisch notwendige Cookies</h2>
+          <p>Folgende Cookies sind für den Betrieb unserer Website technisch notwendig:</p>
+          <div class="table-responsive">
+            <table class="cookie-table">
+              <thead>
+                <tr>
+                  <th>Cookie-Name</th>
+                  <th>Zweck</th>
+                  <th>Speicherdauer</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>session-token</td>
+                  <td>Authentifizierung und Sitzungsverwaltung</td>
+                  <td>24 Stunden</td>
+                </tr>
+                <tr>
+                  <td>csrf-token</td>
+                  <td>Sicherheit (CSRF-Schutz)</td>
+                  <td>Sitzungsdauer</td>
+                </tr>
+                <tr>
+                  <td>ui-preferences</td>
+                  <td>Benutzereinstellungen (Theme, Sprache)</td>
+                  <td>6 Monate</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2>Cookie-Einstellungen</h2>
+          <p>Sie können Ihre Cookie-Einstellungen jederzeit anpassen:</p>
+          <ul>
+            <li>Notwendige Cookies: Immer aktiv (technisch erforderlich)</li>
+            <li>Funktionale Cookies: Können deaktiviert werden (eingeschränkte Funktionalität)</li>
+            <li>Analyse-Cookies: Standardmäßig deaktiviert</li>
+          </ul>
+
+          <div class="cookie-control mt-4">
+            <button class="btn btn-primary" @click="handleCookieSettings">
+              Cookie-Einstellungen anpassen
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -55,7 +141,13 @@
 
 <script>
 export default {
-  name: 'Privacy'
+  name: 'Privacy',
+  inject: ['openCookieSettings'],
+  methods: {
+    handleCookieSettings() {
+      this.openCookieSettings()
+    }
+  }
 }
 </script>
 
@@ -152,6 +244,72 @@ export default {
 @supports not (backdrop-filter: blur(10px)) {
   .privacy-text {
     background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+.framework-section {
+  margin-bottom: 25px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.framework-section h3 {
+  color: var(--color-white);
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.cookie-table {
+  width: 100%;
+  margin: 20px 0;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.cookie-table th,
+.cookie-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cookie-table th {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-white);
+  font-weight: 600;
+}
+
+.cookie-table td {
+  color: var(--color-light);
+}
+
+.cookie-control .btn {
+  background: var(--gradient-primary);
+  border: none;
+  padding: 12px 25px;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+}
+
+.cookie-control .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .cookie-table {
+    display: block;
+    overflow-x: auto;
+  }
+  
+  .framework-section {
+    padding: 10px;
   }
 }
 </style> 

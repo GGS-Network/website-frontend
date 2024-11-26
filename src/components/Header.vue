@@ -1,5 +1,5 @@
 <template>
-  <header v-if="!isDashboardPage" id="header" class="fixed-top" :class="{ 'header-scrolled': isScrolled || !isHomePage }">
+  <header v-if="!isDashboardPage" id="header" class="fixed-top" :class="{ 'header-scrolled': isScrolled }">
     <div class="container d-flex align-items-center justify-content-between">
       <!-- Logo links -->
       <div class="logo">
@@ -22,7 +22,7 @@
           <li><router-link to="/features" class="nav-link" :class="{ 'active': isFeaturesPage }">Funktionen</router-link></li>
           <li><router-link to="/vision" class="nav-link" :class="{ 'active': isVisionPage }">Vision</router-link></li>
           <li><router-link to="/status" class="nav-link" :class="{ 'active': isStatusPage }">Status</router-link></li>
-          <li><router-link to="/datenschutz" class="nav-link" :class="{ 'active': isPrivacyPage }">Datenschutz</router-link></li>
+          <li><router-link to="/about-us" class="nav-link" :class="{ 'active': isAboutUsPage }">Über uns</router-link></li>
         </ul>
       </nav>
 
@@ -61,8 +61,8 @@ export default {
     isStatusPage() {
       return this.$route.path === '/status'
     },
-    isPrivacyPage() {
-      return this.$route.path === '/datenschutz'
+    isAboutUsPage() {
+      return this.$route.path === '/about-us'
     }
   },
   mounted() {

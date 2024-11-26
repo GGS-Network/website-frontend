@@ -1,0 +1,10 @@
+<svg width="200" height="100" xmlns="http://www.w3.org/2000/svg">
+  <g fill="#4834D4">
+    <path d="M50,20 L90,80 L10,80 Z"/>
+    <rect x="45" y="30" width="10" height="40"/>
+    <circle cx="50" cy="15" r="5"/>
+  </g>
+  <text x="110" y="60" font-family="Arial" font-size="14" fill="#333">
+    MÜLLER & PARTNER
+  </text>
+</svg> 

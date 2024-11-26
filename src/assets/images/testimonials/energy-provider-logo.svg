@@ -1,0 +1,9 @@
+<svg width="200" height="100" xmlns="http://www.w3.org/2000/svg">
+  <g fill="#4834D4">
+    <path d="M50,20 L70,50 L50,80 L30,50 Z"/>
+    <path d="M45,45 L55,45 L50,30 Z" fill="#FFF"/>
+  </g>
+  <text x="90" y="60" font-family="Arial" font-size="14" fill="#333">
+    Stadtwerke
+  </text>
+</svg> 

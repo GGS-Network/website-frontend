@@ -3,6 +3,7 @@
     <HeroSection @show-contact="showContact" @show-demo="showDemo" />
     <ServiceSection @show-service="showServiceInfo" />
     <BenefitSection />
+    <TestimonialSection />
     
     <!-- Modals -->
     <ContactModal ref="contactModal" />
@@ -12,9 +13,11 @@
 </template>
 
 <script>
+import { onMounted } from 'vue'
 import HeroSection from '@/components/home/HeroSection.vue'
 import ServiceSection from '@/components/home/ServiceSection.vue'
 import BenefitSection from '@/components/home/BenefitSection.vue'
+import TestimonialSection from '@/components/home/TestimonialSection.vue'
 import ContactModal from '@/components/home/modals/ContactModal.vue'
 import DemoModal from '@/components/home/modals/DemoModal.vue'
 import ServiceModal from '@/components/home/modals/ServiceModal.vue'
@@ -25,9 +28,18 @@ export default {
     HeroSection,
     ServiceSection,
     BenefitSection,
+    TestimonialSection,
     ContactModal,
     DemoModal,
     ServiceModal
+  },
+  setup() {
+    onMounted(() => {
+      // Stellen Sie sicher, dass alle Komponenten geladen sind
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'))
+      }, 100)
+    })
   },
   methods: {
     showContact() {
@@ -41,4 +53,40 @@ export default {
     }
   }
 }
-</script> 
+</script>
+
+<style scoped>
+main {
+  overflow-x: hidden;
+  position: relative;
+}
+
+section {
+  position: relative;
+  z-index: 1;
+}
+
+section:nth-child(even) {
+  background-color: var(--color-light);
+}
+
+section:nth-child(odd) {
+  background-color: var(--color-white);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+</style> 
