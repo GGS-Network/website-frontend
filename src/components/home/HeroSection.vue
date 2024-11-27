@@ -1,27 +1,23 @@
 <template>
-  <section id="hero" class="d-flex align-items-center" :class="{ 'vanta-enabled': useVanta }">
-    <div class="theme-switcher">
-      <div class="switch-container">
-        <span :class="{ 'active': !useVanta }">Standard</span>
-        <label class="switch">
-          <input type="checkbox" v-model="useVanta">
-          <span class="slider"></span>
-        </label>
-        <span :class="{ 'active': useVanta }">Dynamic</span>
-      </div>
-    </div>
-    <div v-if="useVanta" id="vanta-bg" class="hero-bg">
-      <div class="hero-particles"></div>
-      <div class="hero-clouds-1"></div>
-      <div class="hero-clouds-2"></div>
-    </div>
-    <div v-else class="hero-bg standard-bg">
+  <section id="hero" class="d-flex align-items-center">
+    <div id="vanta-bg" v-if="useVanta"></div>
+    <div v-else class="standard-bg">
       <div class="gradient-overlay"></div>
-      <div class="animated-shapes"></div>
       <div class="dynamic-clouds">
         <div class="cloud-layer cloud-layer-1"></div>
         <div class="cloud-layer cloud-layer-2"></div>
         <div class="cloud-layer cloud-layer-3"></div>
+      </div>
+      <div class="animated-shapes"></div>
+    </div>
+    <div class="theme-switcher">
+      <div class="switch-container">
+        <span :class="{ active: !useVanta }">Standard</span>
+        <label class="switch">
+          <input type="checkbox" v-model="useVanta">
+          <span class="slider"></span>
+        </label>
+        <span :class="{ active: useVanta }">Dynamic</span>
       </div>
     </div>
     <div class="container">
@@ -57,13 +53,18 @@
         </div>
       </div>
     </div>
+    <div class="scroll-down">
+      <a href="#services" class="scrollto">
+        <i class="bi bi-chevron-down"></i>
+      </a>
+    </div>
   </section>
 </template>
 
 <script>
 import * as THREE from 'three'
-import CLOUDS from 'vanta/dist/vanta.clouds2.min'
-import { vantaConfig, vantaHelpers } from '@/config/vanta.config'
+import CLOUDS from 'vanta/dist/vanta.clouds.min'
+import { getVantaConfig, updateVantaConfig, getScrollConfig } from '@/config/vanta.config'
 
 export default {
   name: 'HeroSection',
@@ -72,7 +73,7 @@ export default {
     return {
       vantaEffect: null,
       vantaInitialized: false,
-      useVanta: false,
+      useVanta: true,
       isInViewport: false,
       elements: [
         { 
@@ -129,15 +130,22 @@ export default {
     }
   },
   watch: {
-    useVanta(newValue) {
-      if (newValue) {
-        this.$nextTick(() => {
-          this.initVanta()
-        })
-      } else {
-        this.destroyVanta()
+    useVanta: {
+      immediate: true,
+      handler(newValue) {
+        if (newValue) {
+          this.$nextTick(() => {
+            if (!this.vantaEffect) {
+              this.initVantaEffect()
+            }
+          })
+        } else {
+          if (this.vantaEffect) {
+            this.vantaEffect.destroy()
+            this.vantaEffect = null
+          }
+        }
       }
-      localStorage.setItem('heroBackground', newValue ? 'vanta' : 'standard')
     }
   },
   mounted() {
@@ -147,111 +155,51 @@ export default {
     }
     
     if (this.useVanta) {
-      this.setupIntersectionObserver()
+      this.initVantaEffect()
+      window.addEventListener('scroll', this.handleScroll, { passive: true })
     }
     window.addEventListener('resize', this.handleResize)
   },
   beforeUnmount() {
-    this.destroyVanta()
-    window.removeEventListener('resize', this.handleResize)
-    if (this.observer) {
-      this.observer.disconnect()
+    if (this.vantaEffect) {
+      this.vantaEffect.destroy()
     }
+    window.removeEventListener('resize', this.handleResize)
+    window.removeEventListener('scroll', this.handleScroll)
+    clearTimeout(this.scrollTimeout)
   },
   methods: {
-    setupIntersectionObserver() {
-      this.observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              this.isInViewport = true
-              if (!this.vantaInitialized) {
-                this.initVanta()
-              }
-            } else {
-              this.isInViewport = false
-              this.pauseVanta()
-            }
-          })
-        },
-        {
-          threshold: 0.1
-        }
-      )
-      this.observer.observe(document.getElementById('hero'))
-    },
-    initVanta() {
-      if (this.vantaInitialized) return
-      
-      const optimizedConfig = vantaHelpers.getOptimizedConfig()
-      
-      this.vantaEffect = CLOUDS({
-        THREE,
-        ...optimizedConfig
-      })
-      
-      this.vantaInitialized = true
-      this.setupPerformanceOptimizations()
-    },
-    setupPerformanceOptimizations() {
-      let timeout
-      const reduceQuality = () => {
-        if (this.vantaEffect && this.isInViewport) {
-          this.vantaEffect.setOptions({
-            renderClouds: 10,
-            cloudDensity: 0.02,
-            fps: 24
-          })
-        }
-      }
-      const restoreQuality = () => {
-        if (this.vantaEffect && this.isInViewport) {
-          this.vantaEffect.setOptions({
-            renderClouds: 15,
-            cloudDensity: 0.03,
-            fps: 30
-          })
-        }
-      }
+    initVantaEffect() {
+      if (this.vantaEffect) return
 
-      window.addEventListener('scroll', () => {
-        reduceQuality()
-        clearTimeout(timeout)
-        timeout = setTimeout(restoreQuality, 150)
-      }, { passive: true })
+      const config = {
+        el: "#vanta-bg",
+        THREE,
+        ...getVantaConfig()
+      }
+      
+      this.vantaEffect = CLOUDS(config)
     },
-    pauseVanta() {
+
+    handleResize() {
       if (this.vantaEffect) {
-        this.vantaEffect.setOptions({ fps: 0 })
+        updateVantaConfig(this.vantaEffect, window.innerWidth)
       }
     },
-    resumeVanta() {
+
+    handleScroll() {
       if (this.vantaEffect) {
-        this.vantaEffect.setOptions({ fps: 30 })
+        const scrollConfig = getScrollConfig(true)
+        this.vantaEffect.setOptions(scrollConfig)
+        
+        clearTimeout(this.scrollTimeout)
+        this.scrollTimeout = setTimeout(() => {
+          const defaultConfig = getScrollConfig(false)
+          this.vantaEffect.setOptions(defaultConfig)
+        }, 150)
       }
     },
-    destroyVanta() {
-      if (this.vantaEffect) {
-        this.vantaEffect.destroy()
-        this.vantaEffect = null
-        this.vantaInitialized = false
-      }
-    },
-    handleResize: function() {
-      if (this.vantaEffect) {
-        const width = window.innerWidth
-        if (width < 768) {
-          this.vantaEffect.setOptions({
-            renderClouds: 8,
-            cloudDensity: 0.02,
-            fps: 24,
-            scaleMobile: 0.8
-          })
-        } else {
-          this.vantaEffect.resize()
-        }
-      }
-    },
+
     getRandomNumber(min, max) {
       return Math.floor(Math.random() * (max - min + 1) + min)
     },
@@ -264,9 +212,25 @@ export default {
 
 <style scoped>
 #hero {
+  width: 100%;
+  height: 100vh;
   position: relative;
-  min-height: 100vh;
   overflow: hidden;
+  padding-top: var(--header-height);
+}
+
+#vanta-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
 }
 
 .hero-bg {
@@ -276,14 +240,6 @@ export default {
   width: 100%;
   height: 100%;
   z-index: -1;
-}
-
-#vanta-bg {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
 }
 
 .hero-particles {
@@ -601,7 +557,7 @@ h1, h2 {
 }
 
 input:checked + .slider {
-  background-color: var(--color-primary);
+  background-color: var(--color-tertiary);
 }
 
 input:checked + .slider:before {
@@ -769,5 +725,70 @@ input:checked + .slider:before {
   .cloud-layer-1 { animation-duration: 180s; }
   .cloud-layer-2 { animation-duration: 240s; }
   .cloud-layer-3 { animation-duration: 200s; }
+}
+
+.scroll-down {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.scroll-down a {
+  color: var(--color-white);
+  font-size: 24px;
+  display: inline-block;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  animation: bounce 2s infinite;
+  opacity: 0.8;
+  background: rgba(255, 255, 255, 0.1);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.scroll-down a:hover {
+  opacity: 1;
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Verbesserte Transition zwischen den Modi */
+#vanta-bg, .standard-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style> 

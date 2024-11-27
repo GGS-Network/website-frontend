@@ -5,15 +5,27 @@
   --font-primary: "Raleway", sans-serif;
   --font-secondary: "Poppins", sans-serif;
   
-  /* Moderne, einzigartige Farbpalette */
-  --color-primary: #4F46E5;      /* Leuchtendes Indigo */
-  --color-secondary: #7C3AED;    /* Kräftiges Violett */
-  --color-tertiary: #06B6D4;     /* Helles Cyan */
-  --color-accent: #10B981;       /* Smaragdgrün */
+  /* Primäre Farbpalette */
+  --color-primary: #4834d4;
+  --color-secondary: #686de0;
+  --color-tertiary: #7158e2;
+  
+  /* Sektions-Farben */
+  --section-hero: linear-gradient(135deg, #4834d4 0%, #686de0 100%);
+  --section-services: linear-gradient(135deg, #686de0 0%, #7158e2 100%);
+  --section-benefits: linear-gradient(135deg, #7158e2 0%, #4834d4 100%);
+  --section-testimonials: linear-gradient(135deg, #4834d4 0%, #686de0 100%);
+  
+  /* Glasmorphismus */
+  --glass-background: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: rgba(31, 38, 135, 0.15);
+  
+  /* Text Farben */
+  --color-white: #ffffff;
+  --color-light: rgba(255, 255, 255, 0.8);
   
   /* Neutrale Farben */
-  --color-white: #FFFFFF;
-  --color-light: #F3F4F6;
   --color-gray: #9CA3AF;
   --color-dark: #1F2937;
   
@@ -21,11 +33,6 @@
   --gradient-primary: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
   --gradient-secondary: linear-gradient(135deg, var(--color-tertiary) 0%, var(--color-accent) 100%);
   --gradient-dark: linear-gradient(135deg, var(--color-dark) 0%, #374151 100%);
-  
-  /* Glasmorphismus */
-  --glass-background: rgba(255, 255, 255, 0.1);
-  --glass-border: rgba(255, 255, 255, 0.2);
-  --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
   
   /* Schatten */
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -363,4 +370,48 @@ section {
 .services .row {
   margin-right: 0 !important;
   margin-left: 0 !important;
+}
+
+/* Sektion Styles */
+.section-hero {
+  background: var(--section-hero);
+}
+
+.section-services {
+  background: var(--section-services);
+}
+
+.section-benefits {
+  background: var(--section-benefits);
+}
+
+.section-testimonials {
+  background: var(--section-testimonials);
+}
+
+/* Glasmorphismus Komponenten */
+.glass-card {
+  background: var(--glass-background);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 var(--glass-shadow);
+}
+
+/* Übergang zwischen Sektionen */
+.section-transition {
+  position: relative;
+  overflow: hidden;
+}
+
+.section-transition::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100px;
+  background: inherit;
+  transform: skewY(-4deg);
+  transform-origin: bottom;
 } 

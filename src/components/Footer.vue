@@ -63,6 +63,7 @@
                   <button 
                     @click="handleNewsletter" 
                     :disabled="isLoading || !isValidEmail"
+                    class="newsletter-button"
                   >
                     <span v-if="!isLoading">Abonnieren</span>
                     <i v-else class="bi bi-arrow-repeat spinning"></i>
@@ -280,6 +281,8 @@ export default {
   border: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
   overflow: hidden;
+  width: 100%;
+  max-width: 100%;
 }
 
 .newsletter-form.success {
@@ -316,11 +319,13 @@ export default {
 
 .newsletter-form input {
   flex: 1;
+  min-width: 0;
   background: transparent;
   border: none;
   padding: 8px 15px;
   color: var(--color-white);
   transition: all 0.3s ease;
+  font-size: 16px;
 }
 
 .newsletter-form input::placeholder {
@@ -341,30 +346,31 @@ export default {
   cursor: not-allowed;
 }
 
-.newsletter-form button {
-  background: var(--color-tertiary);
+.newsletter-button {
+  white-space: nowrap;
+  background: linear-gradient(135deg, #7158e2 0%, #4834d4 100%);
   border: none;
   padding: 8px 20px;
   border-radius: 50px;
   color: var(--color-white);
   cursor: pointer;
   transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 120px;
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  min-width: fit-content;
 }
 
-.newsletter-form button:disabled {
+.newsletter-button:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #4834d4 0%, #7158e2 100%);
+}
+
+.newsletter-button:disabled {
   opacity: 0.7;
   cursor: not-allowed;
   transform: none !important;
-}
-
-.newsletter-form button:not(:disabled):hover {
-  background: var(--color-secondary);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px 0 rgba(31, 38, 135, 0.2);
 }
 
 .spinning {
@@ -412,8 +418,9 @@ export default {
     padding: 10px;
   }
   
-  .newsletter-form button {
+  .newsletter-button {
     width: 100%;
+    margin-top: 10px;
   }
 }
 

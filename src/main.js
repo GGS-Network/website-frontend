@@ -2,14 +2,15 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import 'bootstrap-icons/font/bootstrap-icons.css'
 import './assets/css/main.css'
 import '@fortawesome/fontawesome-free/css/all.css'
 import Toast from "vue-toastification"
 import "vue-toastification/dist/index.css"
-import { createPinia } from 'pinia'
-import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import { registerSW } from 'virtual:pwa-register'
+import 'bootstrap-icons/font/bootstrap-icons.css'
+
+// Erstelle die App-Instanz
+const app = createApp(App)
 
 // PWA Service Worker Registration
 registerSW({ 
@@ -17,12 +18,6 @@ registerSW({
   onNeedRefresh() {},
   onOfflineReady() {}
 })
-
-// Pinia Store mit Persistenz
-const pinia = createPinia()
-pinia.use(piniaPluginPersistedstate)
-
-const app = createApp(App)
 
 // Toast Konfiguration
 const toastOptions = {
@@ -43,21 +38,13 @@ const toastOptions = {
 // Globale Performance Optimierungen
 app.config.performance = true
 
-// Router mit Caching
-router.beforeEach((to, from, next) => {
-  // Prefetch der Komponenten für verlinkte Routen
-  if (to.matched.length) {
-    to.matched.forEach(record => {
-      const component = record.components.default
-      if (typeof component === 'function') {
-        component()
-      }
-    })
-  }
-  next()
-})
+// Globaler Error Handler
+app.config.errorHandler = (err, vm, info) => {
+  console.error('Global error:', err)
+  console.error('Component:', vm)
+  console.error('Info:', info)
+}
 
-app.use(pinia)
 app.use(router)
 app.use(Toast, toastOptions)
 app.mount('#app') 

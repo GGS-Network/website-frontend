@@ -67,73 +67,86 @@
 </template>
 
 <script>
-import api from '@/services/api';
-import { ref, onMounted, computed } from 'vue';
+import statusService from '@/services/status.service'
 
 export default {
   name: 'Status',
-  setup() {
-    const services = ref([]);
-    const overallStatus = ref('operational');
-    const lastUpdated = ref(null);
-    const loading = ref(false);
-    const error = ref(null);
-    const announcements = ref([]);
-
-    const fetchStatus = async () => {
-      loading.value = true;
-      error.value = null;
+  data() {
+    return {
+      services: [],
+      overallStatus: 'operational',
+      lastUpdated: null,
+      loading: false,
+      error: null,
+      announcements: []
+    }
+  },
+  computed: {
+    formattedLastUpdate() {
+      if (!this.lastUpdated) return '';
+      return new Date(this.lastUpdated).toLocaleString('de-DE', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    },
+    overallStatusText() {
+      const texts = {
+        operational: 'Alle Systeme funktionieren',
+        degraded: 'Einige Systeme eingeschränkt',
+        outage: 'Systemstörung',
+        upcoming: 'System wird bald verfügbar sein'
+      };
+      return texts[this.overallStatus] || this.overallStatus;
+    },
+    overallStatusClass() {
+      return `status-${this.overallStatus}`;
+    }
+  },
+  methods: {
+    async fetchStatus() {
+      this.loading = true;
+      this.error = null;
+      
       try {
-        const response = await api.get('/status');
-        services.value = response.data.services;
-        announcements.value = response.data.announcements;
-        overallStatus.value = response.data.overall.status;
-        lastUpdated.value = new Date(response.data.overall.lastUpdated);
+        const data = await statusService.getSystemStatus();
+        this.services = data.services;
+        this.announcements = data.announcements;
+        this.overallStatus = data.overall.status;
+        this.lastUpdated = data.overall.lastUpdated;
       } catch (err) {
-        error.value = 'Fehler beim Laden der Statusdaten';
+        this.error = 'Fehler beim Laden der Statusdaten';
         console.error(err);
       } finally {
-        loading.value = false;
+        this.loading = false;
       }
-    };
-
-    onMounted(() => {
-      fetchStatus();
-      const interval = setInterval(fetchStatus, 60000);
-
-      const header = document.querySelector('#header');
-      if (header) {
-        header.classList.remove('header-scrolled');
-      }
-
-      return () => clearInterval(interval);
-    });
-
-    const getStatusClass = (status) => ({
-      'status-operational': status === 'operational',
-      'status-degraded': status === 'degraded',
-      'status-outage': status === 'outage'
-    });
-
-    const getStatusText = (status) => {
+    },
+    getStatusClass(status) {
+      return {
+        'status-operational': status === 'operational',
+        'status-degraded': status === 'degraded',
+        'status-outage': status === 'outage'
+      };
+    },
+    getStatusText(status) {
       const texts = {
         operational: 'Betriebsbereit',
         degraded: 'Eingeschränkt',
         outage: 'Störung'
       };
       return texts[status] || status;
-    };
-
-    const getAnnouncementIcon = (type) => {
+    },
+    getAnnouncementIcon(type) {
       const icons = {
         maintenance: 'bi-wrench',
         alert: 'bi-exclamation-triangle',
         info: 'bi-info-circle'
       };
       return icons[type] || 'bi-info-circle';
-    };
-
-    const formatAnnouncementTime = (announcement) => {
+    },
+    formatAnnouncementTime(announcement) {
       const options = { 
         day: '2-digit', 
         month: '2-digit', 
@@ -150,31 +163,19 @@ export default {
         return `Bis ${new Date(announcement.endDate).toLocaleString('de-DE', options)}`;
       }
       return '';
-    };
-
-    return {
-      services,
-      overallStatus,
-      loading,
-      error,
-      fetchStatus,
-      getStatusClass,
-      getStatusText,
-      overallStatusClass: computed(() => getStatusClass(overallStatus.value)),
-      overallStatusText: computed(() => getStatusText(overallStatus.value)),
-      formattedLastUpdate: computed(() => {
-        if (!lastUpdated.value) return '';
-        return new Intl.DateTimeFormat('de-DE', {
-          dateStyle: 'short',
-          timeStyle: 'medium'
-        }).format(lastUpdated.value);
-      }),
-      announcements,
-      getAnnouncementIcon,
-      formatAnnouncementTime
-    };
+    }
+  },
+  mounted() {
+    this.fetchStatus();
+    // Aktualisiere Status alle 60 Sekunden
+    this.intervalId = setInterval(this.fetchStatus, 60000);
+  },
+  beforeUnmount() {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
   }
-};
+}
 </script>
 
 <style scoped>
@@ -254,6 +255,33 @@ export default {
 .status-outage .status-indicator {
   background: #ff3b30;
   box-shadow: 0 0 10px rgba(255, 59, 48, 0.5);
+}
+
+.status-upcoming {
+  background: rgba(113, 88, 226, 0.1);
+  border: 1px solid var(--color-tertiary);
+  color: var(--color-white);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(113, 88, 226, 0.15);
+}
+
+.status-upcoming .status-indicator {
+  background: var(--color-tertiary);
+  box-shadow: 0 0 10px var(--color-tertiary);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(113, 88, 226, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(113, 88, 226, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(113, 88, 226, 0);
+  }
 }
 
 .services-grid {

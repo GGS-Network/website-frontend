@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <SecurityCheck />
     <Header />
     <router-view v-slot="{ Component }">
       <Suspense>
@@ -20,13 +21,15 @@ import { defineAsyncComponent } from 'vue'
 const Header = defineAsyncComponent(() => import('@/components/Header.vue'))
 const Footer = defineAsyncComponent(() => import('@/components/Footer.vue'))
 const CookieConsent = defineAsyncComponent(() => import('@/components/CookieConsent.vue'))
+const SecurityCheck = defineAsyncComponent(() => import('@/components/security/SecurityCheck.vue'))
 
 export default {
   name: 'App',
   components: {
     Header,
     Footer,
-    CookieConsent
+    CookieConsent,
+    SecurityCheck
   },
   methods: {
     handleCookiePreferences(preferences) {

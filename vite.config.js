@@ -1,16 +1,66 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { VitePWA } from 'vite-plugin-pwa'
+import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
 import path from 'path'
 
 export default defineConfig({
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
-    },
+      '@': path.resolve(__dirname, './src')
+    }
   },
   plugins: [
     vue(),
+    ViteImageOptimizer({
+      // Optimierungsoptionen für PNG
+      png: {
+        quality: 70,
+        speed: 3,
+      },
+      // Optimierungsoptionen für JPEG
+      jpeg: {
+        quality: 70,
+        progressive: true,
+      },
+      // Optimierungsoptionen für JPG
+      jpg: {
+        quality: 70,
+        progressive: true,
+      },
+      // Optimierungsoptionen für SVG
+      svg: {
+        multipass: true,
+        plugins: [
+          {
+            name: 'preset-default',
+            params: {
+              overrides: {
+                cleanupNumericValues: false,
+                removeViewBox: false,
+              },
+            },
+          },
+          'sortAttrs',
+          {
+            name: 'addAttributesToSVGElement',
+            params: {
+              attributes: [{ xmlns: 'http://www.w3.org/2000/svg' }],
+            },
+          },
+        ],
+      },
+      // Optimierungsoptionen für GIF
+      gif: {
+        optimizationLevel: 3,
+      },
+      // Optimierungsoptionen für WebP
+      webp: {
+        lossless: true,
+        quality: 80,
+        method: 6,
+      },
+    }),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
@@ -95,7 +145,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           'vendor': ['vue', 'vue-router', 'pinia'],
-          'ui': ['bootstrap', 'bootstrap-icons']
+          'ui': ['bootstrap']
         }
       }
     }

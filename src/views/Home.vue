@@ -3,12 +3,13 @@
     <HeroSection @show-contact="showContact" @show-demo="showDemo" />
     <ServiceSection @show-service="showServiceInfo" />
     <BenefitSection />
-    <TestimonialSection />
+    <!-- <TestimonialSection /> -->
     
     <!-- Modals -->
     <ContactModal ref="contactModal" />
     <DemoModal ref="demoModal" />
     <ServiceModal ref="serviceModal" />
+    <AnnouncementBanner />
   </main>
 </template>
 
@@ -17,10 +18,11 @@ import { onMounted } from 'vue'
 import HeroSection from '@/components/home/HeroSection.vue'
 import ServiceSection from '@/components/home/ServiceSection.vue'
 import BenefitSection from '@/components/home/BenefitSection.vue'
-import TestimonialSection from '@/components/home/TestimonialSection.vue'
+// import TestimonialSection from '@/components/home/TestimonialSection.vue'
 import ContactModal from '@/components/home/modals/ContactModal.vue'
 import DemoModal from '@/components/home/modals/DemoModal.vue'
 import ServiceModal from '@/components/home/modals/ServiceModal.vue'
+import AnnouncementBanner from '@/components/home/AnnouncementBanner.vue'
 
 export default {
   name: 'Home',
@@ -28,14 +30,14 @@ export default {
     HeroSection,
     ServiceSection,
     BenefitSection,
-    TestimonialSection,
+    // TestimonialSection,
     ContactModal,
     DemoModal,
-    ServiceModal
+    ServiceModal,
+    AnnouncementBanner
   },
   setup() {
     onMounted(() => {
-      // Stellen Sie sicher, dass alle Komponenten geladen sind
       setTimeout(() => {
         window.dispatchEvent(new Event('resize'))
       }, 100)
