@@ -2,6 +2,8 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { VitePWA } from 'vite-plugin-pwa'
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer'
+import compression from 'vite-plugin-compression'
+import preload from 'vite-plugin-preload'
 import path from 'path'
 
 export default defineConfig({
@@ -12,23 +14,25 @@ export default defineConfig({
   },
   plugins: [
     vue(),
+    preload({
+      includes: ['fonts', 'css', 'js'],
+      prefetch: {
+        includes: ['images', 'svg']
+      }
+    }),
     ViteImageOptimizer({
-      // Optimierungsoptionen für PNG
       png: {
         quality: 70,
         speed: 3,
       },
-      // Optimierungsoptionen für JPEG
       jpeg: {
         quality: 70,
         progressive: true,
       },
-      // Optimierungsoptionen für JPG
       jpg: {
         quality: 70,
         progressive: true,
       },
-      // Optimierungsoptionen für SVG
       svg: {
         multipass: true,
         plugins: [
@@ -50,11 +54,9 @@ export default defineConfig({
           },
         ],
       },
-      // Optimierungsoptionen für GIF
       gif: {
         optimizationLevel: 3,
       },
-      // Optimierungsoptionen für WebP
       webp: {
         lossless: true,
         quality: 80,
@@ -92,7 +94,7 @@ export default defineConfig({
               cacheName: 'google-fonts-cache',
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 Jahr
+                maxAgeSeconds: 60 * 60 * 24 * 365
               },
               cacheableResponse: {
                 statuses: [0, 200]
@@ -106,7 +108,7 @@ export default defineConfig({
               cacheName: 'gstatic-fonts-cache',
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 Jahr
+                maxAgeSeconds: 60 * 60 * 24 * 365
               },
               cacheableResponse: {
                 statuses: [0, 200]
@@ -120,7 +122,7 @@ export default defineConfig({
               cacheName: 'images-cache',
               expiration: {
                 maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 30 // 30 Tage
+                maxAgeSeconds: 60 * 60 * 24 * 30
               }
             }
           },
@@ -131,12 +133,29 @@ export default defineConfig({
               cacheName: 'static-resources',
               expiration: {
                 maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 2 // 2 Tage
+                maxAgeSeconds: 60 * 60 * 24 * 2
               }
             }
           }
         ]
       }
+    }),
+    compression({
+      algorithm: 'gzip',
+      ext: '.gz',
+      threshold: 1024,
+      deleteOriginFile: false,
+      filter: /\.(js|css|html|json|svg)$/i,
+    }),
+    compression({
+      algorithm: 'brotliCompress',
+      ext: '.br',
+      threshold: 1024,
+      deleteOriginFile: false,
+      filter: /\.(js|css|html|json|svg)$/i,
+      compressionOptions: {
+        level: 11,
+      },
     })
   ],
   build: {
@@ -145,9 +164,55 @@ export default defineConfig({
       output: {
         manualChunks: {
           'vendor': ['vue', 'vue-router', 'pinia'],
-          'ui': ['bootstrap']
-        }
+          'ui': ['bootstrap'],
+          'animations': ['vanta', 'three'],
+          'icons': ['bootstrap-icons']
+        },
+        assetFileNames: (assetInfo) => {
+          let extType = assetInfo.name.split('.').at(1);
+          if (/png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)) {
+            extType = 'img';
+          } else if (/woff|woff2/.test(extType)) {
+            extType = 'fonts';
+          }
+          return `assets/${extType}/[name]-[hash][extname]`;
+        },
+        chunkFileNames: 'assets/js/[name]-[hash].js',
+        entryFileNames: 'assets/js/[name]-[hash].js',
+        compact: true,
+        minifyInternalExports: true
       }
+    },
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+        pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.trace']
+      },
+      format: {
+        comments: false
+      }
+    },
+    cssCodeSplit: true,
+    cssMinify: true,
+    chunkSizeWarningLimit: 500,
+    assetsInlineLimit: 4096,
+    target: 'esnext',
+    modulePreload: {
+      polyfill: true
+    },
+    reportCompressedSize: false,
+    emptyOutDir: true
+  },
+  server: {
+    cors: true,
+    headers: {
+      'Cache-Control': 'public, max-age=31536000',
+    },
+    open: false,
+    hmr: {
+      overlay: false
     }
   }
 }) 

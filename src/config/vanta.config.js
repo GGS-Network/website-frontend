@@ -91,8 +91,18 @@ const deviceConfigs = {
 
 // Performance-Erkennung
 const detectPerformance = () => {
-  const memory = navigator?.deviceMemory || 4
-  const cores = navigator?.hardwareConcurrency || 4
+  let memory = 4;
+  let cores = 4;
+  
+  try {
+    if (typeof navigator !== 'undefined') {
+      memory = navigator.deviceMemory || 4;
+      cores = navigator.hardwareConcurrency || 4;
+    }
+  } catch (e) {
+    console.warn('Performance detection failed:', e);
+  }
+  
   return {
     isHighEnd: memory >= 4 && cores >= 4,
     isLowEnd: memory < 4 || cores < 4
@@ -107,7 +117,7 @@ const detectDeviceType = (width) => {
 }
 
 // Konfiguration basierend auf Gerät und Performance
-export const getVantaConfig = (width = window.innerWidth) => {
+const getVantaConfig = (width = typeof window !== 'undefined' ? window.innerWidth : 1200) => {
   const deviceType = detectDeviceType(width)
   const { isHighEnd } = detectPerformance()
   
@@ -132,28 +142,29 @@ export const getVantaConfig = (width = window.innerWidth) => {
       config = deviceConfigs.desktopLow
   }
 
-  // Log aktiven Modus und Performance-Details
-  console.log('%cVanta.js Mode:', 'color: #4834d4; font-weight: bold; font-size: 12px;')
-  console.log({
-    mode,
-    deviceType,
-    screenWidth: width,
-    isHighEnd,
-    memory: `${navigator?.deviceMemory || 'unknown'}GB`,
-    cores: navigator?.hardwareConcurrency || 'unknown',
-    fps: config.fps,
-    quality: {
-      clouds: config.renderClouds,
-      density: config.cloudDensity,
-      scale: config.scale
-    }
-  })
+  if (typeof window !== 'undefined') {
+    console.log('%cVanta.js Mode:', 'color: #4834d4; font-weight: bold; font-size: 12px;')
+    console.log({
+      mode,
+      deviceType,
+      screenWidth: width,
+      isHighEnd,
+      memory: `${navigator?.deviceMemory || 'unknown'}GB`,
+      cores: navigator?.hardwareConcurrency || 'unknown',
+      fps: config.fps,
+      quality: {
+        clouds: config.renderClouds,
+        density: config.cloudDensity,
+        scale: config.scale
+      }
+    })
+  }
 
   return config
 }
 
 // Dynamische Konfigurationsanpassung
-export const updateVantaConfig = (vantaEffect, width = window.innerWidth) => {
+const updateVantaConfig = (vantaEffect, width = typeof window !== 'undefined' ? window.innerWidth : 1200) => {
   const newConfig = getVantaConfig(width)
   if (vantaEffect) {
     vantaEffect.setOptions(newConfig)
@@ -162,10 +173,12 @@ export const updateVantaConfig = (vantaEffect, width = window.innerWidth) => {
 }
 
 // Performance-Optimierung für Scroll-Events
-export const getScrollConfig = (isScrolling = false) => {
+const getScrollConfig = (isScrolling = false) => {
   return {
     renderClouds: isScrolling ? 6 : getVantaConfig().renderClouds,
     cloudDensity: isScrolling ? 0.01 : getVantaConfig().cloudDensity,
     fps: isScrolling ? 24 : getVantaConfig().fps
   }
-} 
+}
+
+export { getVantaConfig, updateVantaConfig, getScrollConfig } 
