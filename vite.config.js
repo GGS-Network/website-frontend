@@ -12,6 +12,9 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src')
     }
   },
+  optimizeDeps: {
+    include: ['bootstrap-icons']
+  },
   plugins: [
     vue(),
     preload({
@@ -161,12 +164,12 @@ export default defineConfig({
   build: {
     sourcemap: false,
     rollupOptions: {
+      external: ['bootstrap-icons'],
       output: {
         manualChunks: {
           'vendor': ['vue', 'vue-router', 'pinia'],
           'ui': ['bootstrap'],
-          'animations': ['vanta', 'three'],
-          'icons': ['bootstrap-icons']
+          'animations': ['vanta', 'three']
         },
         assetFileNames: (assetInfo) => {
           let extType = assetInfo.name.split('.').at(1);
@@ -213,6 +216,13 @@ export default defineConfig({
     open: false,
     hmr: {
       overlay: false
+    }
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: `@import "bootstrap-icons/font/bootstrap-icons.css";`
+      }
     }
   }
 }) 
