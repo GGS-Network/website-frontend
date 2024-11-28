@@ -10,7 +10,9 @@
       </div>
       <div class="animated-shapes"></div>
     </div>
-    <div class="theme-switcher">
+
+    <!-- Theme Switcher -->
+    <div v-if="isSafariOnMac()" class="theme-switcher">
       <div class="switch-container">
         <span :class="{ active: !useVanta }">Standard</span>
         <label class="switch">
@@ -20,6 +22,7 @@
         <span :class="{ active: useVanta }">Dynamic</span>
       </div>
     </div>
+
     <div class="container">
       <div class="row">
         <div class="col-lg-6 pt-5 pt-lg-0 order-2 order-lg-1 d-flex flex-column justify-content-center">
@@ -73,7 +76,7 @@ export default {
     return {
       vantaEffect: null,
       vantaInitialized: false,
-      useVanta: true,
+      useVanta: false,
       isInViewport: false,
       elements: [
         { 
@@ -149,16 +152,14 @@ export default {
     }
   },
   mounted() {
-    const savedPreference = localStorage.getItem('heroBackground')
-    if (savedPreference) {
-      this.useVanta = savedPreference === 'vanta'
-    }
+    setTimeout(() => {
+      this.initBackground()
+    }, 100)
     
     if (this.useVanta) {
-      this.initVantaEffect()
       window.addEventListener('scroll', this.handleScroll, { passive: true })
+      window.addEventListener('resize', this.handleResize)
     }
-    window.addEventListener('resize', this.handleResize)
   },
   beforeUnmount() {
     if (this.vantaEffect) {
@@ -205,6 +206,41 @@ export default {
     },
     getRandomOffset() {
       return this.getRandomNumber(-20, 20)
+    },
+
+    isSafariOnMac() {
+      const isMac = /Macintosh/i.test(navigator.userAgent) || 
+                   /Mac OS X/i.test(navigator.userAgent)
+      
+      const isSafari = (
+        /^((?!chrome|android).)*safari/i.test(navigator.userAgent) ||
+        (/Safari/i.test(navigator.userAgent) && !/Chrome/i.test(navigator.userAgent)) ||
+        (navigator.vendor && navigator.vendor.indexOf('Apple') > -1)
+      )
+      
+      console.log('%cBrowser Detection:', 'color: #4834d4; font-weight: bold;', {
+        userAgent: navigator.userAgent,
+        vendor: navigator.vendor,
+        isMac,
+        isSafari,
+        platform: navigator.platform,
+        appVersion: navigator.appVersion
+      })
+
+      return isMac && isSafari
+    },
+
+    initBackground() {
+      this.useVanta = this.isSafariOnMac()
+      
+      if (this.useVanta) {
+        console.log('%cActivating dynamic background for Safari on MacBook', 'color: #4834d4;')
+        this.$nextTick(() => {
+          this.initVantaEffect()
+        })
+      } else {
+        console.log('%cUsing static background', 'color: #4834d4;')
+      }
     }
   }
 }
@@ -607,6 +643,19 @@ input:checked + .slider:before {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .gradient-overlay {

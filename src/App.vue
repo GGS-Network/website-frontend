@@ -11,7 +11,6 @@
       </Suspense>
     </router-view>
     <Footer />
-    <CookieConsent ref="cookieConsent" @preferences-updated="handleCookiePreferences" />
   </div>
 </template>
 
@@ -20,7 +19,6 @@ import { defineAsyncComponent } from 'vue'
 
 const Header = defineAsyncComponent(() => import('@/components/Header.vue'))
 const Footer = defineAsyncComponent(() => import('@/components/Footer.vue'))
-const CookieConsent = defineAsyncComponent(() => import('@/components/CookieConsent.vue'))
 const SecurityCheck = defineAsyncComponent(() => import('@/components/security/SecurityCheck.vue'))
 
 export default {
@@ -28,21 +26,7 @@ export default {
   components: {
     Header,
     Footer,
-    CookieConsent,
     SecurityCheck
-  },
-  methods: {
-    handleCookiePreferences(preferences) {
-      console.log('Cookie preferences updated:', preferences)
-    },
-    openCookieSettings() {
-      this.$refs.cookieConsent.openSettings()
-    }
-  },
-  provide() {
-    return {
-      openCookieSettings: this.openCookieSettings
-    }
   }
 }
 </script>
